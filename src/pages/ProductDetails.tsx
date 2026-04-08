@@ -21,21 +21,19 @@ export default function ProductDetails() {
   if (isLoading) return <div className="loading">Loading...</div>;
   if (!product) return <div className="page"><p>Product not found.</p></div>;
 
+  const imgUrl = product.images?.[0]?.url || 'https://placehold.co/500x400?text=No+Image';
+
   const handleAdd = () => {
     if (!isAuthenticated) { toast.error('Please login first'); return; }
     addItem(product, qty);
-    toast.success(`${product.title} added to cart`);
+    toast.success(`${product.name} added to cart`);
   };
 
   return (
     <div className="page product-details">
-      <img
-        src={product.images?.[0] || 'https://placehold.co/500x400?text=No+Image'}
-        alt={product.title}
-        className="detail-img"
-      />
+      <img src={imgUrl} alt={product.name} className="detail-img" />
       <div className="detail-info">
-        <h1>{product.title}</h1>
+        <h1>{product.name}</h1>
         <p className="product-brand">{product.brand}</p>
         <p className="product-price">${Number(product.price).toFixed(2)}</p>
         <p className="product-stock">
@@ -54,11 +52,7 @@ export default function ProductDetails() {
               value={qty}
               onChange={(e) => setQty(Number(e.target.value))}
             />
-            <button
-              className="btn btn-primary"
-              onClick={handleAdd}
-              disabled={product.stock === 0}
-            >
+            <button className="btn btn-primary" onClick={handleAdd} disabled={product.stock === 0}>
               Add to Cart
             </button>
           </div>

@@ -21,12 +21,12 @@ export default function CartPage() {
           {items.map((item) => (
             <div key={item.id} className="cart-item">
               <img
-                src={item.product.images?.[0] || 'https://placehold.co/80x80?text=N/A'}
-                alt={item.product.title}
+                src={item.product.images?.[0]?.url || 'https://placehold.co/80x80?text=N/A'}
+                alt={item.product.name}
                 className="cart-item-img"
               />
               <div className="cart-item-info">
-                <h3>{item.product.title}</h3>
+                <h3>{item.product.name}</h3>
                 <p>${Number(item.product.price).toFixed(2)}</p>
               </div>
               <div className="cart-item-qty">

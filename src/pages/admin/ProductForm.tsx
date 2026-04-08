@@ -9,7 +9,7 @@ import type { Category, Product } from '../../types';
 import toast from 'react-hot-toast';
 
 const productSchema = z.object({
-  title: z.string().min(1, 'Title required').refine((v) => v.trim().length > 0, 'Cannot be empty spaces'),
+  name: z.string().min(1, 'Name required').refine((v) => v.trim().length > 0, 'Cannot be empty spaces'),
   description: z.string().min(20, 'Description must be at least 20 characters').refine((v) => v.trim().length > 0),
   brand: z.string().min(1, 'Brand required').refine((v) => v.trim().length > 0, 'Cannot be empty spaces'),
   price: z.string().min(1, 'Price required'),
@@ -45,13 +45,13 @@ export default function ProductFormPage() {
   useEffect(() => {
     if (existing) {
       reset({
-        title: existing.title,
+        name: existing.name,
         description: existing.description,
         brand: existing.brand,
         price: String(existing.price),
         stock: String(existing.stock),
-        categoryId: existing.category?.id || existing.categoryId || '',
-        images: existing.images?.join(', ') || '',
+        categoryId: existing.categoryId || existing.category?.id || '',
+        images: existing.images?.map((i) => i.url).join(', ') || '',
       });
     }
   }, [existing, reset]);
@@ -59,15 +59,17 @@ export default function ProductFormPage() {
   const mutation = useMutation({
     mutationFn: (data: ProductForm) => {
       const payload = {
-        title: data.title,
+        name: data.name,
         description: data.description,
         brand: data.brand,
         price: Number(data.price),
         stock: Number(data.stock),
         categoryId: data.categoryId,
-        images: data.images.split(',').map((s) => s.trim()).filter(Boolean),
+        images: data.images.split(',').map((s) => s.trim()).filter(Boolean).map((url) => ({ url })),
       };
-      return isEdit ? api.patch(`/api/admin/products/${id}`, payload) : api.post('/api/admin/products', payload);
+      return isEdit
+        ? api.patch(`/api/admin/products/${id}`, payload)
+        : api.post('/api/admin/products', payload);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['products'] });
@@ -81,7 +83,7 @@ export default function ProductFormPage() {
   });
 
   const fields: { name: keyof ProductForm; label: string; type?: string; as?: 'textarea' }[] = [
-    { name: 'title', label: 'Title' },
+    { name: 'name', label: 'Product Name' },
     { name: 'description', label: 'Description', as: 'textarea' },
     { name: 'brand', label: 'Brand' },
     { name: 'price', label: 'Price', type: 'number' },

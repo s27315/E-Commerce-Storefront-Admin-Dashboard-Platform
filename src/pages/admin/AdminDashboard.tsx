@@ -82,12 +82,12 @@ export default function AdminDashboard() {
           {loadingProducts ? <div className="loading">Loading...</div> : (
             <table className="table">
               <thead>
-                <tr><th>Title</th><th>Brand</th><th>Price</th><th>Stock</th><th>Category</th><th>Actions</th></tr>
+                <tr><th>Name</th><th>Brand</th><th>Price</th><th>Stock</th><th>Category</th><th>Actions</th></tr>
               </thead>
               <tbody>
                 {products.map((p) => (
                   <tr key={p.id}>
-                    <td>{p.title}</td>
+                    <td>{p.name}</td>
                     <td>{p.brand}</td>
                     <td>${Number(p.price).toFixed(2)}</td>
                     <td>{p.stock}</td>

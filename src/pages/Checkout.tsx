@@ -142,7 +142,7 @@ export default function Checkout() {
             <div className="review-items">
               {items.map((i) => (
                 <div key={i.id} className="review-item">
-                  <span>{i.product.title} × {i.quantity}</span>
+                  <span>{i.product.name} × {i.quantity}</span>
                   <span>${(i.product.price * i.quantity).toFixed(2)}</span>
                 </div>
               ))}

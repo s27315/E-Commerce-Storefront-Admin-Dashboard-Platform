@@ -11,14 +11,20 @@ export interface Category {
   description?: string;
 }
 
+export interface ProductImage {
+  url: string;
+  format?: string;
+  size?: number;
+}
+
 export interface Product {
   id: string;
-  title: string;
+  name: string;
   description: string;
   price: number;
   stock: number;
   brand: string;
-  images: string[];
+  images: ProductImage[];
   category: Category;
   categoryId?: string;
 }
