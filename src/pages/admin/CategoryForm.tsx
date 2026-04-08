@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../lib/api';
-import { Category } from '../../types';
+import type { Category } from '../../types';
 import toast from 'react-hot-toast';
 
 const categorySchema = z.object({

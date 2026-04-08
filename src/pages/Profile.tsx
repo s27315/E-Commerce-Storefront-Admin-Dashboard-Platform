@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
-import { Order } from '../types';
+import type { Order } from '../types';
 import { useAuth } from '../context/AuthContext';
 
 export default function Profile() {

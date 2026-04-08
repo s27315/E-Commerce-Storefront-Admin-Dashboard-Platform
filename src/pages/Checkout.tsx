@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import api from '../lib/api';
 import { useCart } from '../context/CartContext';
-import { PaymentMethod } from '../types';
+import type { PaymentMethod } from '../types';
 import toast from 'react-hot-toast';
 
 const checkoutSchema = z.object({

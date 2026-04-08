@@ -5,18 +5,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import api from '../../lib/api';
-import { Category, Product } from '../../types';
+import type { Category, Product } from '../../types';
 import toast from 'react-hot-toast';
 
 const productSchema = z.object({
   title: z.string().min(1, 'Title required').refine((v) => v.trim().length > 0, 'Cannot be empty spaces'),
   description: z.string().min(20, 'Description must be at least 20 characters').refine((v) => v.trim().length > 0),
   brand: z.string().min(1, 'Brand required').refine((v) => v.trim().length > 0, 'Cannot be empty spaces'),
-  price: z.coerce.number().positive('Price must be greater than 0'),
-  stock: z.coerce.number().int('Stock must be an integer').min(0, 'Stock must be 0 or greater'),
+  price: z.string().min(1, 'Price required'),
+  stock: z.string().min(1, 'Stock required'),
   categoryId: z.string().min(1, 'Category required'),
   images: z.string().min(1, 'At least one image URL required'),
-});
+}).refine((d) => Number(d.price) > 0, { message: 'Price must be greater than 0', path: ['price'] })
+  .refine((d) => Number.isInteger(Number(d.stock)) && Number(d.stock) >= 0, { message: 'Stock must be a non-negative integer', path: ['stock'] });
 
 type ProductForm = z.infer<typeof productSchema>;
 
@@ -47,8 +48,8 @@ export default function ProductFormPage() {
         title: existing.title,
         description: existing.description,
         brand: existing.brand,
-        price: existing.price,
-        stock: existing.stock,
+        price: String(existing.price),
+        stock: String(existing.stock),
         categoryId: existing.category?.id || existing.categoryId || '',
         images: existing.images?.join(', ') || '',
       });
@@ -58,7 +59,12 @@ export default function ProductFormPage() {
   const mutation = useMutation({
     mutationFn: (data: ProductForm) => {
       const payload = {
-        ...data,
+        title: data.title,
+        description: data.description,
+        brand: data.brand,
+        price: Number(data.price),
+        stock: Number(data.stock),
+        categoryId: data.categoryId,
         images: data.images.split(',').map((s) => s.trim()).filter(Boolean),
       };
       return isEdit ? api.put(`/products/${id}`, payload) : api.post('/products', payload);
@@ -74,7 +80,7 @@ export default function ProductFormPage() {
     },
   });
 
-  const fields: { name: keyof ProductForm; label: string; type?: string; as?: 'textarea' | 'select' }[] = [
+  const fields: { name: keyof ProductForm; label: string; type?: string; as?: 'textarea' }[] = [
     { name: 'title', label: 'Title' },
     { name: 'description', label: 'Description', as: 'textarea' },
     { name: 'brand', label: 'Brand' },

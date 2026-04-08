@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import api from '../../lib/api';
-import { Product, Order, OrderStatus, Category } from '../../types';
+import type { Product, Order, OrderStatus, Category } from '../../types';
 import ConfirmModal from '../../components/ConfirmModal';
 import toast from 'react-hot-toast';
 

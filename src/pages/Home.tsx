@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../lib/api';
-import { Product, Category } from '../types';
+import type { Product, Category } from '../types';
 import ProductCard from '../components/ProductCard';
 
 export default function Home() {
