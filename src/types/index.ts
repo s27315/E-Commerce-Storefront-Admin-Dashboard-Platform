@@ -71,7 +71,7 @@ export interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   userRole: 'USER' | 'ADMIN' | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<'ADMIN' | 'USER'>;
   logout: () => void;
   register: (name: string, email: string, password: string) => Promise<void>;
 }

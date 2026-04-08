@@ -19,17 +19,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     else localStorage.removeItem('user');
   }, [user]);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<'ADMIN' | 'USER'> => {
     if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       const adminUser: User = { id: 'admin', name: 'Admin', email: ADMIN_EMAIL, role: 'ADMIN' };
       localStorage.setItem('token', 'admin-static-token');
+      localStorage.setItem('user', JSON.stringify(adminUser));
       setUser(adminUser);
-      return;
+      return 'ADMIN';
     }
     const res = await api.post('/api/auth/users/login', { email, password });
     const { token, user: userData } = res.data;
+    const role: 'ADMIN' | 'USER' = userData.role ?? 'USER';
+    const fullUser: User = { ...userData, role };
     localStorage.setItem('token', token);
-    setUser({ ...userData, role: userData.role ?? 'USER' });
+    localStorage.setItem('user', JSON.stringify(fullUser));
+    setUser(fullUser);
+    return role;
   };
 
   const register = async (name: string, email: string, password: string) => {

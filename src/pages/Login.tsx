@@ -30,10 +30,9 @@ export default function LoginPage() {
 
   const onLogin = async (data: LoginForm) => {
     try {
-      await login(data.email, data.password);
-      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const role = await login(data.email, data.password);
       toast.success('Logged in successfully');
-      navigate(user.role === 'ADMIN' ? '/admin' : '/');
+      navigate(role === 'ADMIN' ? '/admin' : '/');
     } catch {
       toast.error('Invalid credentials');
     }
