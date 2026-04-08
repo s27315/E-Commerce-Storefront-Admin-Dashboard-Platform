@@ -15,7 +15,7 @@ export default function ProductDetails() {
 
   const { data: product, isLoading } = useQuery<Product>({
     queryKey: ['product', id],
-    queryFn: () => api.get(`/products/${id}`).then((r) => r.data),
+    queryFn: () => api.get(`/api/public/products/${id}`).then((r) => r.data?.data?.product ?? r.data?.data),
   });
 
   if (isLoading) return <div className="loading">Loading...</div>;

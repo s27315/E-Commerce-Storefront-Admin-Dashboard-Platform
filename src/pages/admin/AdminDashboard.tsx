@@ -16,21 +16,21 @@ export default function AdminDashboard() {
 
   const { data: products = [], isLoading: loadingProducts } = useQuery<Product[]>({
     queryKey: ['products'],
-    queryFn: () => api.get('/products').then((r) => r.data),
+    queryFn: () => api.get('/api/public/products').then((r) => r.data?.data?.all ?? []),
   });
 
   const { data: orders = [], isLoading: loadingOrders } = useQuery<Order[]>({
     queryKey: ['all-orders'],
-    queryFn: () => api.get('/orders').then((r) => r.data),
+    queryFn: () => api.get('/api/auth/orders/admin/all').then((r) => r.data?.data ?? []),
   });
 
   const { data: categories = [], isLoading: loadingCats } = useQuery<Category[]>({
     queryKey: ['categories'],
-    queryFn: () => api.get('/categories').then((r) => r.data),
+    queryFn: () => api.get('/api/categories').then((r) => r.data?.data ?? r.data ?? []),
   });
 
   const deleteProduct = useMutation({
-    mutationFn: (id: string) => api.delete(`/products/${id}`),
+    mutationFn: (id: string) => api.delete(`/api/admin/products/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['products'] });
       toast.success('Product deleted');
@@ -41,7 +41,7 @@ export default function AdminDashboard() {
 
   const updateOrderStatus = useMutation({
     mutationFn: ({ id, status }: { id: string; status: OrderStatus }) =>
-      api.put(`/orders/${id}/status`, { status }),
+      api.patch(`/api/auth/orders/${id}/status`, { status }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['all-orders'] });
       toast.success('Order status updated');
@@ -50,7 +50,7 @@ export default function AdminDashboard() {
   });
 
   const deleteCategory = useMutation({
-    mutationFn: (id: string) => api.delete(`/categories/${id}`),
+    mutationFn: (id: string) => api.delete(`/api/categories/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['categories'] });
       toast.success('Category deleted');
@@ -124,7 +124,7 @@ export default function AdminDashboard() {
                         value={o.status}
                         onChange={(e) => updateOrderStatus.mutate({ id: o.id, status: e.target.value as OrderStatus })}
                       >
-                        {(['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as OrderStatus[]).map((s) => (
+                        {(['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as OrderStatus[]).map((s) => (
                           <option key={s} value={s}>{s}</option>
                         ))}
                       </select>

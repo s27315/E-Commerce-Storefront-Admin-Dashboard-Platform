@@ -10,12 +10,12 @@ export default function Home() {
 
   const { data: products = [], isLoading } = useQuery<Product[]>({
     queryKey: ['products'],
-    queryFn: () => api.get('/products').then((r) => r.data),
+    queryFn: () => api.get('/api/public/products').then((r) => r.data?.data?.all ?? []),
   });
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ['categories'],
-    queryFn: () => api.get('/categories').then((r) => r.data),
+    queryFn: () => api.get('/api/categories').then((r) => r.data?.data ?? r.data ?? []),
   });
 
   const filtered = products.filter((p) => {

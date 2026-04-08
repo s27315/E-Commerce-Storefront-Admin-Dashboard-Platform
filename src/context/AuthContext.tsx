@@ -26,14 +26,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(adminUser);
       return;
     }
-    const res = await api.post('/users/login', { email, password });
+    const res = await api.post('/api/auth/users/login', { email, password });
     const { token, user: userData } = res.data;
     localStorage.setItem('token', token);
     setUser({ ...userData, role: userData.role ?? 'USER' });
   };
 
   const register = async (name: string, email: string, password: string) => {
-    await api.post('/users/register', { name, email, password });
+    await api.post('/api/auth/users/register', { email, password, name });
   };
 
   const logout = () => {

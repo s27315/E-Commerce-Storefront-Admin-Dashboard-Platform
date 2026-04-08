@@ -29,12 +29,12 @@ export default function ProductFormPage() {
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ['categories'],
-    queryFn: () => api.get('/categories').then((r) => r.data),
+    queryFn: () => api.get('/api/categories').then((r) => r.data?.data ?? r.data ?? []),
   });
 
   const { data: existing } = useQuery<Product>({
     queryKey: ['product', id],
-    queryFn: () => api.get(`/products/${id}`).then((r) => r.data),
+    queryFn: () => api.get(`/api/public/products/${id}`).then((r) => r.data?.data?.product ?? r.data?.data),
     enabled: isEdit,
   });
 
@@ -67,7 +67,7 @@ export default function ProductFormPage() {
         categoryId: data.categoryId,
         images: data.images.split(',').map((s) => s.trim()).filter(Boolean),
       };
-      return isEdit ? api.put(`/products/${id}`, payload) : api.post('/products', payload);
+      return isEdit ? api.patch(`/api/admin/products/${id}`, payload) : api.post('/api/admin/products', payload);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['products'] });

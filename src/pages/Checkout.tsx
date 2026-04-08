@@ -34,12 +34,24 @@ export default function Checkout() {
   });
 
   const mutation = useMutation({
-    mutationFn: (data: CheckoutForm) =>
-      api.post('/orders', {
-        ...data,
-        items: items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-        totalAmount: total,
-      }),
+    mutationFn: async (data: CheckoutForm) => {
+      // Add each cart item to server cart first
+      for (const item of items) {
+        await api.post('/api/auth/cart/items', {
+          productId: item.productId,
+          variantId: item.productId, // use productId as variantId fallback
+          quantity: item.quantity,
+        });
+      }
+      // Place order from cart
+      return api.post('/api/auth/orders', {
+        shippingAddress: `${data.shippingAddress}, ${data.city}${data.postalCode ? ', ' + data.postalCode : ''}`,
+        paymentMethod: data.paymentMethod,
+        fullName: data.fullName,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+      });
+    },
     onSuccess: () => {
       clearCart();
       toast.success('Order placed successfully!');
@@ -47,7 +59,7 @@ export default function Checkout() {
     },
     onError: (err: unknown) => {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      toast.error(msg || 'Order failed');
+      toast.error(msg || 'Order failed. Please try again.');
     },
   });
 

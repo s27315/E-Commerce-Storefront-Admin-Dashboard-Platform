@@ -8,7 +8,7 @@ export default function Profile() {
 
   const { data: orders = [], isLoading } = useQuery<Order[]>({
     queryKey: ['my-orders'],
-    queryFn: () => api.get('/orders/me').then((r) => r.data),
+    queryFn: () => api.get('/api/auth/orders').then((r) => r.data?.data ?? []),
   });
 
   return (

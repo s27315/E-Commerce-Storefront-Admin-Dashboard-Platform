@@ -23,7 +23,7 @@ export default function CategoryFormPage() {
 
   const { data: existing } = useQuery<Category>({
     queryKey: ['category', id],
-    queryFn: () => api.get(`/categories/${id}`).then((r) => r.data),
+    queryFn: () => api.get(`/api/categories/${id}`).then((r) => r.data?.data ?? r.data),
     enabled: isEdit,
   });
 
@@ -37,7 +37,7 @@ export default function CategoryFormPage() {
 
   const mutation = useMutation({
     mutationFn: (data: CategoryForm) =>
-      isEdit ? api.patch(`/categories/${id}`, data) : api.post('/categories', data),
+      isEdit ? api.put(`/api/categories/${id}`, data) : api.post('/api/categories', data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['categories'] });
       toast.success(isEdit ? 'Category updated!' : 'Category created!');
